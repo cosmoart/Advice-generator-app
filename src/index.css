@@ -18,19 +18,15 @@ body {
 }
 
 .spinner {
-	animation: spin .5s ease-in-out infinite backwards;
+	animation: spin 1s cubic-bezier(.26, .8, .27, 1.19) infinite;
 }
 
 @keyframes spin {
 	0% {
-		transform: rotate(0deg);
-	}
-
-	80% {
-		transform: rotate(300deg);
+		transform: translate(-50%, 0) rotate(0deg);
 	}
 
 	100% {
-		transform: rotate(260deg);
+		transform: translate(-50%, 0) rotate(360deg);
 	}
 }

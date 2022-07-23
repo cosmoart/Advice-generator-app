@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 const AdviceCard = styled.article`
 	position:absolute;
-	width: clamp(14rem, 75vw, 30rem);
+	width: clamp(14rem, 82vw, 30rem);
 	top:50%;
 	left:50%;
 	transform:translate(-50%,-50%);
@@ -31,13 +31,12 @@ const AdviceButton = styled.button`
 	border: none;
 	width: 3rem;
 	height: 3rem;
-	/* padding: 12px; */
 	cursor: pointer;
-	transition: box-shadow 0.2s ease-in-out;
 	position:absolute;
 	left:50%;
 	top: calc(100% - (3rem / 2));
 	transform: translate(-50%, 0);
+	transition: box-shadow 0.2s ease-in-out;
 	&:hover {
 		box-shadow: 0px 0px 15px 5px var(--NeonGreen);
 	}
@@ -58,22 +57,27 @@ function App() {
 	const [id, setId] = useState(``);
 	const [quoteError, setQuoteError] = useState(false);
 	const quoteButton = useRef(null);
+	let busy = false;
 
 	const getAdvice = (id) => {
-		console.log(quoteButton.current);
-		quoteButton.current.classList.add("spinner");
+		busy = true;
+		if (quoteButton.current) quoteButton.current.classList.add("spinner");
+		console.log("Calling API");
 
 		let url = id === "" ? `https://api.adviceslip.com/advice` : `https://api.adviceslip.com/advice/${id}`;
 
-		fetch(url).then(res => res.json()).then(data => {
+
+		fetch(url).then(res => res.ok ? res.json() : Promise.reject(res)).then(data => {
 			setAdvice(data.slip.advice);
 			setId(data.slip.id);
 			location.hash = data.slip.id;
 			setQuoteError(false);
 		}).catch(err => {
+			console.log(err);
 			setQuoteError(true)
 		}).finally(() => {
-			quoteButton.current.classList.remove("spinner")
+			if (quoteButton.current) quoteButton.current.classList.remove("spinner");
+			busy = false;
 		})
 	}
 
@@ -120,7 +124,7 @@ function App() {
 					<source media="(max-width: 767px)" srcSet="pattern-divider-mobile.svg" />
 					<img src="pattern-divider-desktop.svg" alt="" style={{ "width": "100%" }} />
 				</picture>
-				<AdviceButton ref={quoteButton} onClick={() => getAdvice("")}><img src="icon-dice.svg" title='Generate a new advice' style={{ "marginTop": "2px" }} />
+				<AdviceButton ref={quoteButton} onClick={() => !busy && getAdvice("")}><img src="icon-dice.svg" title='Generate a new advice' style={{ "marginTop": "2px" }} />
 				</AdviceButton>
 			</AdviceCard>
 			}
