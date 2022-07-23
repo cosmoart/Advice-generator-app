@@ -11,3 +11,26 @@ body {
 	text-align: center;
 	font-family: 'Manrope', sans-serif;
 }
+
+.disappear {
+	position: relative;
+	top: -100%;
+}
+
+.spinner {
+	animation: spin .5s ease-in-out infinite backwards;
+}
+
+@keyframes spin {
+	0% {
+		transform: rotate(0deg);
+	}
+
+	80% {
+		transform: rotate(300deg);
+	}
+
+	100% {
+		transform: rotate(260deg);
+	}
+}

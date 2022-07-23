@@ -1,14 +1,18 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 
 const AdviceCard = styled.article`
 	position:absolute;
+	width: clamp(14rem, 75vw, 30rem);
 	top:50%;
 	left:50%;
 	transform:translate(-50%,-50%);
 	padding: 3rem;
 	background: var(--DarkGrayishBlue);
 	border-radius: 10px;
+	@media screen and (max-width: 767px) {
+		padding: 2rem 1.5rem;
+	}
 	`
 const AdviceNumber = styled.p`
 	color: var(--NeonGreen);
@@ -18,7 +22,8 @@ const AdviceNumber = styled.p`
 	`
 const AdviceQuote = styled.h1`
 	color: var(--LightCyan);
-	font-size: 28px;
+	font-size: clamp(18px, 5vw, 28px);
+	transition: top 0.5s ease-in-out;
 	`
 const AdviceButton = styled.button`
 	border-radius: 50%;
@@ -36,6 +41,9 @@ const AdviceButton = styled.button`
 	&:hover {
 		box-shadow: 0px 0px 15px 5px var(--NeonGreen);
 	}
+	&:active {
+		transform: translate(-50%, 0) scale(.9);
+	}
 	`
 const Loader = styled.img`
 	position:absolute;
@@ -49,21 +57,29 @@ function App() {
 	const [advice, setAdvice] = useState(``);
 	const [id, setId] = useState(``);
 	const [quoteError, setQuoteError] = useState(false);
+	const quoteButton = useRef(null);
 
 	const getAdvice = (id) => {
+		console.log(quoteButton.current);
+		quoteButton.current.classList.add("spinner");
+
 		let url = id === "" ? `https://api.adviceslip.com/advice` : `https://api.adviceslip.com/advice/${id}`;
 
 		fetch(url).then(res => res.json()).then(data => {
 			setAdvice(data.slip.advice);
 			setId(data.slip.id);
 			location.hash = data.slip.id;
+			setQuoteError(false);
 		}).catch(err => {
 			setQuoteError(true)
-			location.hash = "404";
-		});
+		}).finally(() => {
+			quoteButton.current.classList.remove("spinner")
+		})
 	}
 
 	useEffect(() => {
+		window.addEventListener('hashchange', (e) => id !== new URL(e.newURL).hash && getAdvice(new URL(e.newURL).hash.slice(1)));
+
 		if (location.hash === "") {
 			setAdvice(`It is easy to sit up and take notice, what's difficult is getting up and taking action.`);
 			return setId(`117`);
@@ -81,9 +97,10 @@ function App() {
 		getAdvice(location.hash.slice(1));
 	}, []);
 
+
 	useEffect(() => {
-		// console.log(advice);
-		return () => console.log(advice);
+		// console.log("nuevo" + advice);
+		// return () => console.log("antiguo" + advice);
 	}, [advice]);
 
 	return (
@@ -101,9 +118,9 @@ function App() {
 				<picture>
 					<source media="(min-width: 768px)" srcSet="pattern-divider-desktop.svg" />
 					<source media="(max-width: 767px)" srcSet="pattern-divider-mobile.svg" />
-					<img src="pattern-divider-desktop.svg" alt="" />
+					<img src="pattern-divider-desktop.svg" alt="" style={{ "width": "100%" }} />
 				</picture>
-				<AdviceButton onClick={() => getAdvice("")}><img src="icon-dice.svg" title='Generate a new advice' />
+				<AdviceButton ref={quoteButton} onClick={() => getAdvice("")}><img src="icon-dice.svg" title='Generate a new advice' style={{ "marginTop": "2px" }} />
 				</AdviceButton>
 			</AdviceCard>
 			}
