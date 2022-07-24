@@ -137,7 +137,7 @@ function App() {
 					<img src="pattern-divider-desktop.svg" alt="" style={{ "maxWidth": "100%", "margin": "24px 0px 17px 0" }} />
 				</picture>
 				<AdviceButton ref={quoteButton} onClick={() => !busy && getAdvice("")} title='Generate a new advice'>
-					<img src="icon-dice.svg" />
+					<img src="icon-dice.svg" alt=''/>
 				</AdviceButton>
 			</AdviceCard>
 			}
