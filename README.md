@@ -86,4 +86,4 @@ This challenge was a great learning opportunity, it was also very useful to rein
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 [live-page]: https://cosmo-advice-generator-app.netlify.app
-[solution-url]: https://github.com/othneildrew/Best-README-Template/graphs/contributors
+[solution-url]: https://www.frontendmentor.io/solutions/advice-generator-app-solution-ib3BvrznY_
