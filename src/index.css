@@ -12,13 +12,6 @@ body {
 	font-family: 'Manrope', sans-serif;
 }
 
-.bg {
-	position: absolute;
-	top: 0;
-	left: 0;
-	opacity: .5;
-}
-
 :focus-visible {
 	outline: 3px dashed var(--NeonGreen);
 	outline-offset: 4px;

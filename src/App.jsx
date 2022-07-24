@@ -72,28 +72,21 @@ function App() {
 	const getAdvice = (id) => {
 		busy = true;
 		if (quoteButton.current) quoteButton.current.classList.add("spinner");
-		console.log("Calling API");
 
 		let url = id === "" ? `https://api.adviceslip.com/advice` : `https://api.adviceslip.com/advice/${id}`;
-
 
 		fetch(url).then(res => res.json()).then(data => {
 			setAdvice(data.slip.advice);
 			setId(data.slip.id);
 			location.hash = data.slip.id;
 			setQuoteError(false);
-		}).catch(err => {
-			setQuoteError(true)
-		}).finally(() => {
+		}).catch(err => {setQuoteError(true)}).finally(() => {
 			if (quoteButton.current) quoteButton.current.classList.remove("spinner");
 			busy = false;
 		})
 	}
 
 	useEffect(() => {
-		window.addEventListener("online", (e) => console.log("Internet!"));
-		window.addEventListener("offline", (e) => console.log("SIN Internet!"));
-
 		window.addEventListener('hashchange', (e) => id !== new URL(e.newURL).hash && getAdvice(new URL(e.newURL).hash.slice(1)));
 
 		if (location.hash === "") {
@@ -112,12 +105,6 @@ function App() {
 		}
 		getAdvice(location.hash.slice(1));
 	}, []);
-
-
-	useEffect(() => {
-		// console.log("nuevo" + advice);
-		// return () => console.log("antiguo" + advice);
-	}, [advice]);
 
 	return (
 		<>
