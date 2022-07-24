@@ -3,20 +3,19 @@ import styled from 'styled-components';
 
 const AdviceCard = styled.article`
 	position:absolute;
-	width: clamp(14rem, 82vw, 30rem);
-	top:50%;
+	width: clamp(14rem, 80vw, 33.6rem);
+	top:calc(50% - (2rem / 2));
 	left:50%;
 	transform:translate(-50%,-50%);
-	padding: 3rem;
+	padding: 3rem 2rem;
 	background: var(--DarkGrayishBlue);
 	border-radius: 10px;
-	@media screen and (max-width: 767px) {
-		padding: 2rem 1.5rem;
-	}
+	box-shadow: -8px 8px 20px 4px rgb(0 0 0 / 10%);
 	`
 const AdviceNumber = styled.p`
 	color: var(--NeonGreen);
-	font-size: 12px;
+	font-size: clamp(13px,3vw,15px);
+	margin: 0;
 	text-transform: uppercase;
 	letter-spacing: 3px;
 	`
@@ -24,24 +23,35 @@ const AdviceQuote = styled.h1`
 	color: var(--LightCyan);
 	font-size: clamp(18px, 5vw, 28px);
 	transition: top 0.5s ease-in-out;
+	line-height: 37px;
+	margin: 24px 0 22px 0;
+	@media screen and (max-width: 500px){
+		line-height: 25px;
+	}
 	`
 const AdviceButton = styled.button`
 	border-radius: 50%;
 	background: var(--NeonGreen);
 	border: none;
-	width: 3rem;
-	height: 3rem;
+	width: 4rem;
+	height: 4rem;
 	cursor: pointer;
 	position:absolute;
 	left:50%;
-	top: calc(100% - (3rem / 2));
+	top: calc(100% - (4rem / 2));
 	transform: translate(-50%, 0);
 	transition: box-shadow 0.2s ease-in-out;
 	&:hover {
-		box-shadow: 0px 0px 15px 5px var(--NeonGreen);
+		box-shadow: 0px 0px 20px 5px var(--NeonGreen);
 	}
 	&:active {
 		transform: translate(-50%, 0) scale(.9);
+	}
+	@media screen and (max-width: 500px){
+		transform: translate(-50%,0) scale(.85)
+	}
+	img{
+		margin-top: 2px;
 	}
 	`
 const Loader = styled.img`
@@ -67,13 +77,12 @@ function App() {
 		let url = id === "" ? `https://api.adviceslip.com/advice` : `https://api.adviceslip.com/advice/${id}`;
 
 
-		fetch(url).then(res => res.ok ? res.json() : Promise.reject(res)).then(data => {
+		fetch(url).then(res => res.json()).then(data => {
 			setAdvice(data.slip.advice);
 			setId(data.slip.id);
 			location.hash = data.slip.id;
 			setQuoteError(false);
 		}).catch(err => {
-			console.log(err);
 			setQuoteError(true)
 		}).finally(() => {
 			if (quoteButton.current) quoteButton.current.classList.remove("spinner");
@@ -82,6 +91,9 @@ function App() {
 	}
 
 	useEffect(() => {
+		window.addEventListener("online", (e) => console.log("Internet!"));
+		window.addEventListener("offline", (e) => console.log("SIN Internet!"));
+
 		window.addEventListener('hashchange', (e) => id !== new URL(e.newURL).hash && getAdvice(new URL(e.newURL).hash.slice(1)));
 
 		if (location.hash === "") {
@@ -122,9 +134,10 @@ function App() {
 				<picture>
 					<source media="(min-width: 768px)" srcSet="pattern-divider-desktop.svg" />
 					<source media="(max-width: 767px)" srcSet="pattern-divider-mobile.svg" />
-					<img src="pattern-divider-desktop.svg" alt="" style={{ "width": "100%" }} />
+					<img src="pattern-divider-desktop.svg" alt="" style={{ "maxWidth": "100%", "margin": "24px 0px 17px 0" }} />
 				</picture>
-				<AdviceButton ref={quoteButton} onClick={() => !busy && getAdvice("")}><img src="icon-dice.svg" title='Generate a new advice' style={{ "marginTop": "2px" }} />
+				<AdviceButton ref={quoteButton} onClick={() => !busy && getAdvice("")} title='Generate a new advice'>
+					<img src="icon-dice.svg" />
 				</AdviceButton>
 			</AdviceCard>
 			}
